@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace Brainstorm.Areas.Staff.Controllers
 {
+    [Area("Staff")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

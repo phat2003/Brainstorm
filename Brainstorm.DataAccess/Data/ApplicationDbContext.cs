@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Brainstorm.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace Brainstorm.DataAccess.Data
         {
 
         }
-        
+        public DbSet<Category> Categories { get; set; }
     }
 }
