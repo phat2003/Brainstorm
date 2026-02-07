@@ -1,41 +1,50 @@
-﻿using Brainstorm.DataAccess.Data;
-using Brainstorm.DataAccess.Repository;
-using Brainstorm.DataAccess.Repository.IRepository;
+﻿using Brainstorm.DataAccess.Repository.IRepository;
 using Brainstorm.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Brainstorm.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class CategoryController : Controller
+    public class TopicController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;//biến này chỉ được đọc(không được ghi hay làm gì khác).
-        public CategoryController(IUnitOfWork unitOfWork)
+        
+        private readonly IUnitOfWork _unitOfWork;
+
+        // Constructor: Nhận ApplicationDbContext để thao tác với CSDL
+        public TopicController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
+
+        // 1. Action hiển thị danh sách Topic
         public IActionResult Index()
         {
-            IEnumerable<Category> objCategoryList = _unitOfWork.Category.GetAll();
-            return View(objCategoryList);
-
+            IEnumerable<Topic> objTopicList = _unitOfWork.Topic.GetAll();
+            return View(objTopicList);
         }
 
+        // 2. Action hiển thị Form thêm mới (GET)
         public IActionResult Create()
         {
             return View();
         }
 
+        // 3. Action xử lý dữ liệu thêm mới (POST)
         [HttpPost]
-        public IActionResult Create(Category obj)
+        public IActionResult Create(Topic obj)
         {
+            if (obj.ClosureDate > obj.FinalClosureDate)
+            {
+                ModelState.AddModelError("FinalClosureDate", "Hạn đóng bình luận không được sớm hơn Hạn nộp ý tưởng.");
+            }
+            // Kiểm tra tính hợp lệ của dữ liệu
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Add(obj); // Thêm vào danh sách chờ
-                _unitOfWork.Save();       // Lưu thực sự vào Database
+                _unitOfWork.Topic.Add(obj); // Thêm vào danh sách chờ
+                _unitOfWork.Save();   // Lưu vào SQL Server
                 return RedirectToAction("Index"); // Quay về trang danh sách
             }
-            return View(obj);
+            return View(obj); // Nếu lỗi (ví dụ chưa nhập ngày), hiện lại form
         }
 
         public IActionResult Edit(int? id)
@@ -45,19 +54,19 @@ namespace Brainstorm.Areas.Admin.Controllers
                 return NotFound();
             }
             //var categoryfromDb = _db.Categories.Find(id);//tạo biến var categoryfromDb và cho = find id để tìm tới id của nó trong database
-            var categoryfromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            var topicfromDbFirst = _unitOfWork.Topic.GetFirstOrDefault(u => u.Id == id);
             //var categoryfromDbsingle = _db.Categories.SingleOrDefault(u => u.Id == id);
-            if (categoryfromDbFirst == null)//ở đây do đã set categoryfromDb = id nên id null hoặc = 0 thì categoryfromDb cũng null và trả về notfound giống id.
+            if (topicfromDbFirst == null)//ở đây do đã set categoryfromDb = id nên id null hoặc = 0 thì categoryfromDb cũng null và trả về notfound giống id.
             {
                 return NotFound();
             }
-            return View(categoryfromDbFirst);//trả về view dù cho có đáp ứng 2 điều kiện trên hay không.
+            return View(topicfromDbFirst);//trả về view dù cho có đáp ứng 2 điều kiện trên hay không.
         }
 
         //post
         [HttpPost]
-        [ValidateAntiForgeryToken]//lệnh này dùng để chống giả mạo về method này
-        public IActionResult Edit(Category obj)
+        //[ValidateAntiForgeryToken]
+        public IActionResult Edit(Topic obj)
         {
             //if (obj.Name == obj.DisplayOrder.ToString())
             //{
@@ -65,7 +74,7 @@ namespace Brainstorm.Areas.Admin.Controllers
             //}
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(obj);
+                _unitOfWork.Topic.Update(obj);
                 _unitOfWork.Save();
                 TempData["Sucess"] = "Category Edit sucessfully";
                 return RedirectToAction("index");
@@ -80,20 +89,20 @@ namespace Brainstorm.Areas.Admin.Controllers
                 return NotFound();
             }
             //var categoryfromDb = _db.Categories.Find(id);
-            var categoryfromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            var topicfromDbFirst = _unitOfWork.Topic.GetFirstOrDefault(u => u.Id == id);
             //var categoryfromDbsingle = _db.Categories.SingleOrDefault(u => u.Id == id);
-            if (categoryfromDbFirst == null)
+            if (topicfromDbFirst == null)
             {
                 return NotFound();
             }
-            return View(categoryfromDbFirst);
-            
+            return View(topicfromDbFirst);
+
         }
 
         [HttpPost]
         public IActionResult DeletePost(int? id)
         {
-            var obj = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            var obj = _unitOfWork.Topic.GetFirstOrDefault(u => u.Id == id);
             //var categoryfromDbFirst = _db.Categories.FirstOrDefault(u=>u.Id==id);
             //var categoryfromDbsingle = _db.Categories.SingleOrDefault(u => u.Id == id);
             if (obj == null)
@@ -102,13 +111,13 @@ namespace Brainstorm.Areas.Admin.Controllers
             }
             else
             {
-                _unitOfWork.Category.Remove(obj);
+                _unitOfWork.Topic.Remove(obj);
                 _unitOfWork.Save();
                 TempData["Sucess"] = "Category Delete sucessfully";
                 return RedirectToAction("index");
             }
             return View(obj);
-            
+
         }
     }
 }
