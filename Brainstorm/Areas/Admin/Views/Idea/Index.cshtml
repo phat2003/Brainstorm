@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Idea>
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Danh Sách Ý Tưởng</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Idea" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Đóng Góp Ý Tưởng
+            </a>
+        </div>
+    </div>
+
+    <br />
+
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Nội Dung</th>
+                <th>Danh Mục</th>
+                <th>Chủ Đề</th>
+                <th>Ngày Tạo</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td width="30%">@obj.Text</td>
+                    
+                    @* Hiển thị Tên thay vì ID *@
+                    <td width="15%">@obj.Category.Name</td>
+                    <td width="15%">@obj.Topic.Name</td>
+
+                    <td width="15%">@obj.CreatedDate.ToString("dd/MM/yyyy")</td>
+                    
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            @* Các nút này tạm thời chưa hoạt động *@
+                            <a class="btn btn-warning mx-2"> <i class="bi bi-pencil-square"></i></a>
+                            <a class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

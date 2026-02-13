@@ -12,7 +12,7 @@ namespace Brainstorm.DataAccess.Repository
     {
         public ICategoryRepository Category { get; private set; }// thuộc tính chỉ có thể được nhận(get) và gán(set) giá trị bên trong lớp này.
         public ITopicRepository Topic { get; private set; }
-        
+        public IIdeaRepository Idea { get; private set; }
 
         private readonly ApplicationDbContext _db;//biến này chỉ được đọc(không được ghi hay làm gì khác).
 
@@ -21,6 +21,7 @@ namespace Brainstorm.DataAccess.Repository
             _db = db;// gán giá trị cho biến _db.
             Category = new CategoryRepository(_db);//khởi tạo CategoryRepository và gán nó cho thuộc tính Category.
             Topic = new TopicRepository(_db);
+            Idea = new IdeaRepository(_db);
         }
         public void Save()
         {

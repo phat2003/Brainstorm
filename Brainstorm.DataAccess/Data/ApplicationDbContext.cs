@@ -16,5 +16,6 @@ namespace Brainstorm.DataAccess.Data
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Topic> Topics { get; set; }
+        public DbSet<Idea> Ideas { get; set; }
     }
 }
