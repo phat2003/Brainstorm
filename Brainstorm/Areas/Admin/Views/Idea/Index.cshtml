@@ -6,7 +6,7 @@
             <h2 class="text-primary">Danh Sách Ý Tưởng</h2>
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="Idea" asp-action="Create" class="btn btn-primary">
+            <a asp-controller="Idea" asp-action="Upsert" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Đóng Góp Ý Tưởng
             </a>
         </div>
@@ -39,8 +39,8 @@
                     <td>
                         <div class="w-75 btn-group" role="group">
                             @* Các nút này tạm thời chưa hoạt động *@
-                            <a class="btn btn-warning mx-2"> <i class="bi bi-pencil-square"></i></a>
-                            <a class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i></a>
+                            <a asp-controller="Idea" asp-action="Upsert" asp-route-id="@obj.Id" class="btn btn-warning mx-2"> <i class="bi bi-pencil-square"></i></a>
+                            <a asp-controller="Idea" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i></a>
                         </div>
                     </td>
                 </tr>

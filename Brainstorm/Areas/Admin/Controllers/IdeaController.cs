@@ -18,7 +18,7 @@ namespace Brainstorm.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            IEnumerable<Idea> objIdeaList = _unitOfWork.Idea.GetAll();
+            IEnumerable<Idea> objIdeaList = _unitOfWork.Idea.GetAll(includeProperties: "Category,Topic");//chỗ này buộc phải có includeProperties để lấy dữ liệu từ bảng Category và Topic liên kết với bảng Idea. Nếu không View này sẽ báo lỗi null.
             return View(objIdeaList);
         }
         public IActionResult Upsert(int? id)
@@ -64,7 +64,7 @@ namespace Brainstorm.Areas.Admin.Controllers
                 if (filepath != null)
                 {
                     string fileName = Guid.NewGuid().ToString();
-                    var uploads = Path.Combine(wwwRootPath, @"images\products");
+                    var uploads = Path.Combine(wwwRootPath, @"images\ideas");
                     var extension = Path.GetExtension(filepath.FileName);
                     if (obj.idea.FilePath != null)
                     {
@@ -79,7 +79,7 @@ namespace Brainstorm.Areas.Admin.Controllers
                     {
                         filepath.CopyTo(fileStreams);
                     }
-                    obj.idea.FilePath = @"images\products\" + fileName + extension;
+                    obj.idea.FilePath = @"images\ideas\" + fileName + extension;
 
                 }
                 if (obj.idea.Id == 0)
@@ -111,6 +111,48 @@ namespace Brainstorm.Areas.Admin.Controllers
                 });
             // --------------------------------------------------------
 
+            return View(obj);
+        }
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var ideaFromDbFirst = _unitOfWork.Idea.GetFirstOrDefault(u => u.Id == id, includeProperties: "Category,Topic");
+            if (ideaFromDbFirst == null)
+            {
+                return NotFound();
+            }
+            return View(ideaFromDbFirst);
+        }
+        [HttpPost]
+        public IActionResult DeletePost(int? id)
+        {
+            var obj = _unitOfWork.Idea.GetFirstOrDefault(u => u.Id == id);
+
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                if (obj.FilePath != null)
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    //this is an edit and we need to remove old image
+                    var oldImagePath = Path.Combine(wwwRootPath, obj.FilePath.TrimStart('\\'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+                _unitOfWork.Idea.Remove(obj);
+                _unitOfWork.Save();
+                TempData["Sucess"] = "Category Delete sucessfully";
+                return RedirectToAction("index");
+
+            }
             return View(obj);
         }
     }

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Brainstorm.Models
 {
@@ -21,6 +22,7 @@ namespace Brainstorm.Models
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         // --- Thiết lập quan hệ với Category ---
+        [ValidateNever]
         [Required]
         [Display(Name = "Category")]
         public int CategoryId { get; set; } // Khóa ngoại
@@ -29,6 +31,7 @@ namespace Brainstorm.Models
         public Category? Category { get; set; } // Navigation Property
 
         // --- Thiết lập quan hệ với Topic ---
+        [ValidateNever]
         [Required]
         [Display(Name = "Topic")]
         public int TopicId { get; set; } // Khóa ngoại
